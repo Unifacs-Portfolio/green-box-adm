@@ -1,0 +1,116 @@
+.home-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.title {
+    font-size: 2.5em;
+    color: #D2691E;
+}
+
+.button-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+button {
+    background-color: #f2a057;
+    color: white;
+    padding: 15px 30px;
+    margin: 15px; /* Espaçamento entre os botões */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    width: 300px; /* Mesma largura para os botões */
+}
+
+button:hover {
+    transform: scale(1.05); /* Um leve aumento no tamanho */
+    filter: brightness(1.1); /* Aumenta o brilho sem mudar a cor completamente */
+}
+
+/* Estilo para os formulários */
+.form-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+form div {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button[type="submit"] {
+    background-color: #32CD32;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #228B22;
+}
+
+/* Cores específicas para cada botão */
+.button-culinaria-gastronomia {
+    background-color: #FFA500;
+}
+
+.button-moda {
+    background-color: #FF6347;
+}
+
+.button-veterinaria {
+    background-color: #66CDAA;
+}
+
+.button-engenharia {
+    background-color: #696969;
+}
+
+.button-ti {
+    background-color: #4682B4;
+}
+
+.button-cosmeticos {
+    background-color: #BA55D3;
+}
+
+.button-comunidade {
+    background-color: #ff7f7f; /* Vermelho suave */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    position: absolute; /* Posiciona o botão de forma absoluta */
+    top: 20px; /* Distância do topo */
+    right: 20px; /* Distância da direita */
+}
+
+.button-comunidade:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}

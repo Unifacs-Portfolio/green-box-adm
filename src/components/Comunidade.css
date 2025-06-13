@@ -1,0 +1,58 @@
+.comunidade-container {
+    height: 100vh; /* Ocupa 100% da altura da tela */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centraliza verticalmente */
+    align-items: center; /* Centraliza horizontalmente */
+    padding: 20px;
+    box-sizing: border-box; /* Inclui padding na largura e altura total */
+    overflow: hidden; /* Remove rolagem desnecessária */
+}
+
+h1 {
+    font-size: 2.5em;
+    color: #4B0082;
+}
+
+p {
+    margin-top: 10px;
+    font-size: 1.2em;
+    color: #555;
+}
+
+.hub-buttons {
+    margin-top: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.button {
+    background-color: #8A2BE2;
+    color: white;
+    padding: 15px 30px;
+    margin: 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    width: 300px;
+}
+
+/* button:hover {
+    background-color: #6A0DAD;
+} */
+
+.dicas-verificadas {
+    margin-top: 40px;
+}
+
+.dicas-verificadas h2 {
+    font-size: 1.8em;
+    color: #333;
+}
+
+.dicas-verificadas p {
+    font-size: 1.2em;
+    color: #888;
+}

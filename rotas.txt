@@ -1,0 +1,54 @@
+======================================
+   LISTA DE ENDPOINTS DA API
+======================================
+
+--- USUÁRIOS E AUTENTICAÇÃO ---
+[POST]   /api/usuario - Cria um novo usuário.
+[POST]   /api/usuario/login - Realiza login e retorna um token JWT.
+[POST]   /api/usuario/reset - Envia um token de redefinição de senha por e-mail.
+[POST]   /api/usuario/reset/:token - Atualiza a senha usando o token.
+[GET]    /api/usuario - Lista todos os usuários. [AUTH]
+[GET]    /api/usuario/:email - Busca um usuário pelo e-mail. [AUTH]
+[PUT]    /api/usuario/:email - Atualiza um usuário. [AUTH]
+[DELETE] /api/usuario/:email - Deleta um usuário. [AUTH]
+
+--- DICAS ---
+[POST]   /api/dicas - Cria uma nova dica. [AUTH]
+[GET]    /api/dicas - Lista todas as dicas.
+[GET]    /api/dicas/:id - Busca uma dica pelo seu ID (UUID).
+[PUT]    /api/dicas/:id - Atualiza uma dica. [AUTH]
+[DELETE] /api/dicas/:id - Deleta uma dica. [AUTH]
+[PATCH]  /api/dicas/:id/verificar - Marca uma dica como verificada. [AUTH]
+[GET]    /api/:tema/dicas - Lista dicas por tema.
+[GET]    /api/:tema/dicas/verificadas - Lista dicas verificadas por tema.
+[GET]    /api/:tema/dicas/nao-verificadas - Lista dicas não verificadas por tema.
+[GET]    /api/:tema/dicas/especialistas - Lista dicas de especialistas por tema.
+[GET]    /api/dicas/:tema/:subtema - Busca dicas por tema e subtema.
+
+--- RECEITAS ---
+[POST]   /api/receitas - Cria uma nova receita com fotos.
+[GET]    /api/receitas - Lista todas as receitas.
+[GET]    /api/receitas/:id - Busca uma receita pelo seu ID (UUID).
+[PUT]    /api/receitas/:id - Atualiza uma receita.
+[DELETE] /api/receitas/:id - Deleta uma receita.
+[PATCH]  /api/receitas/:id/verificar - Marca uma receita como verificada.
+[GET]    /api/:tema/receitas - Lista receitas por tema.
+[GET]    /api/:tema/receitas/verificadas - Lista receitas verificadas por tema.
+[GET]    /api/:tema/receitas/nao-verificadas - Lista receitas não verificadas por tema.
+[GET]    /api/receitas/:tema/:subtema - Busca receitas por tema e subtema.
+
+--- INGREDIENTES ---
+[POST]   /api/ingredientes - Cria um novo ingrediente para uma receita.
+[GET]    /api/ingredientes - Lista todos os ingredientes.
+[GET]    /api/ingredientes/:ingredienteId - Busca um ingrediente pelo seu ID.
+[PUT]    /api/ingredientes/:ingredienteId - Atualiza um ingrediente.
+[DELETE] /api/ingredientes/:ingredienteId - Deleta um ingrediente.
+
+--- TEMAS ---
+[GET]    /api/tema - Lista todos os temas. [AUTH]
+[GET]    /api/tema/:id - Verifica se um tema existe (por ID numérico). [AUTH]
+[GET]    /api/tema/:tema/subtemas - Lista subtemas de um tema (pelo nome). [AUTH]
+[DELETE] /api/tema/:id - Deleta um tema pelo seu ID. [AUTH]
+
+
+
