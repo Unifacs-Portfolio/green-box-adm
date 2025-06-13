@@ -1,0 +1,349 @@
+A base da URL para os exemplos é http://localhost:3000. Para produção, use https://api-consumo-app.onrender.com.
+### Usuários e Autenticação
+1. Criar um novo usuário
+Endpoint: POST /api/usuario
+
+Descrição: Cadastra um novo usuário no sistema. A foto de perfil é opcional.
+
+Autenticação: Não.
+
+Exemplo de Requisição (com foto):
+
+Este endpoint usa multipart/form-data para o envio de arquivos.
+Bash
+
+curl --location --request POST 'http://localhost:3000/api/usuario' \
+--form 'nome="Novo Usuário"' \
+--form 'email="usuario.novo@exemplo.com"' \
+--form 'senha="senhaforte123"' \
+--form 'telefone="+5511987654321"' \
+--form 'nivelConsciencia="3"' \
+--form 'isMonitor="false"' \
+--form 'tokens="token_push_fcm_aqui"' \
+--form 'fotoUsu=@"/caminho/para/sua/foto.jpg"'
+2. Realizar Login
+Endpoint: POST /api/usuario/login
+
+Descrição: Autentica um usuário e retorna um token JWT para acesso às rotas protegidas.
+
+Autenticação: Não.
+
+Exemplo de Requisição:
+
+Bash
+
+curl --location --request POST 'http://localhost:3000/api/usuario/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "email": "usuario.novo@exemplo.com",
+    "senha": "senhaforte123"
+}'
+3. Solicitar Redefinição de Senha
+Endpoint: POST /api/usuario/reset
+
+Descrição: Envia um token de redefinição de senha para o e-mail do usuário.
+
+Autenticação: Não.
+
+Exemplo de Requisição:
+
+Bash
+
+curl --location --request POST 'http://localhost:3000/api/usuario/reset' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "email": "usuario.novo@exemplo.com"
+}'
+4. Redefinir a Senha com Token
+Endpoint: POST /api/usuario/reset/:token
+
+Descrição: Define uma nova senha para o usuário usando o token recebido por e-mail.
+
+Autenticação: Não.
+
+Exemplo de Requisição:
+
+Bash
+
+curl --location --request POST 'http://localhost:3000/api/usuario/reset/<token_recebido_no_email>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "newPassword": "minhanovasenha123"
+}'
+5. Listar todos os usuários
+Endpoint: GET /api/usuario
+
+Descrição: Retorna uma lista com os dados públicos de todos os usuários.
+
+Autenticação: Sim.
+
+Exemplo de Requisição:
+
+Bash
+
+curl --location --request GET 'http://localhost:3000/api/usuario' \
+--header 'Authorization: Bearer <seu_token_jwt_aqui>'
+### Dicas
+1. Criar uma nova dica
+Endpoint: POST /api/dicas
+
+Descrição: Publica uma nova dica no sistema.
+
+Autenticação: Sim.
+
+Exemplo de Requisição:
+
+Bash
+
+curl --location --request POST 'http://localhost:3000/api/dicas' \
+--header 'Authorization: Bearer <seu_token_jwt_aqui>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "email": "usuario.novo@exemplo.com",
+    "titulo": "Como Reduzir o Consumo de Plástico",
+    "conteudo": "Uma ótima maneira é começar usando sacolas reutilizáveis...",
+    "tema": "Consumo",
+    "subtemas": ["Plástico", "Sustentabilidade"]
+}'
+2. Buscar uma dica por ID
+Endpoint: GET /api/dicas/:id
+
+Descrição: Retorna os detalhes de uma dica específica.
+
+Autenticação: Não.
+
+Exemplo de Requisição:
+
+Bash
+
+curl --location --request GET 'http://localhost:3000/api/dicas/<uuid_da_dica_aqui>'
+3. Verificar uma dica
+Endpoint: PATCH /api/dicas/:id/verificar
+
+Descrição: Marca uma dica como verificada (ação restrita a monitores).
+
+Autenticação: Sim.
+
+Exemplo de Requisição:
+
+Bash
+
+curl --location --request PATCH 'http://localhost:3000/api/dicas/<uuid_da_dica_aqui>/verificar' \
+--header 'Authorization: Bearer <seu_token_jwt_aqui>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "verifyBy": "email_do_monitor@exemplo.com"
+}'
+### Receitas
+1. Criar uma nova receita
+Endpoint: POST /api/receitas
+
+Descrição: Publica uma nova receita, com a opção de enviar fotos.
+
+Autenticação: Não.
+
+Exemplo de Requisição:
+
+Bash
+
+curl --location --request POST 'http://localhost:3000/api/receitas' \
+--form 'titulo="Bolo de Casca de Banana"' \
+--form 'conteudo="Modo de preparo: ..."' \
+--form 'idUsuario="<uuid_do_usuario_aqui>"' \
+--form 'tema="Gastro"' \
+--form 'subtemas[]="Aproveitamento Integral"' \
+--form 'subtemas[]="Doces"' \
+--form 'files=@"/caminho/para/foto1.jpg"' \
+--form 'files=@"/caminho/para/foto2.png"'
+2. Listar todas as receitas
+Endpoint: GET /api/receitas
+
+Descrição: Retorna uma lista com todas as receitas publicadas.
+
+Autenticação: Não.
+
+Exemplo de Requisição:
+
+Bash
+
+curl --location --request GET 'http://localhost:3000/api/receitas'
+### Ingredientes
+1. Adicionar um ingrediente a uma receita
+Endpoint: POST /api/ingredientes
+
+Descrição: Adiciona um novo ingrediente e o associa a uma receita existente.
+
+Autenticação: Não.
+
+Exemplo de Requisição:
+
+Bash
+
+curl --location --request POST 'http://localhost:3000/api/ingredientes' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "nomeIngrediente": "Casca de Banana",
+    "quantidade": 2,
+    "medida": "unidades",
+    "receitaId": "<uuid_da_receita_aqui>"
+}'
+2. Listar todos os ingredientes
+Endpoint: GET /api/ingredientes
+
+Descrição: Retorna uma lista com todos os ingredientes de todas as receitas.
+
+Autenticação: Não.
+
+Exemplo de Requisição:
+
+Bash
+
+curl --location --request GET 'http://localhost:3000/api/ingredientes'
+### Temas
+1. Listar todos os temas
+Endpoint: GET /api/tema
+
+Descrição: Retorna uma lista com todos os temas principais.
+
+Autenticação: Sim.
+
+Exemplo de Requisição:
+
+Bash
+
+curl --location --request GET 'http://localhost:3000/api/tema' \
+--header 'Authorization: Bearer <seu_token_jwt_aqui>'
+2. Listar subtemas de um tema
+Endpoint: GET /api/tema/:tema/subtemas
+
+Descrição: Retorna os subtemas de um tema específico, identificado pelo nome.
+
+Autenticação: Sim.
+
+Exemplo de Requisição:
+
+Bash
+
+curl --location --request GET 'http://localhost:3000/api/tema/Gastro/subtemas' \
+--header 'Authorization: Bearer <seu_token_jwt_aqui>'
+
+
+### Endpoints Adicionais (Completando a Lista)
+Usuários (Gerenciamento)
+Buscar um usuário por e-mail
+Endpoint: GET /api/usuario/:email
+Autenticação: Sim.
+Exemplo:
+Bash
+
+curl --location --request GET 'http://localhost:3000/api/usuario/usuario.novo@exemplo.com' \
+--header 'Authorization: Bearer <seu_token_jwt_aqui>'
+Atualizar um usuário
+Endpoint: PUT /api/usuario/:email
+Autenticação: Sim.
+Exemplo:
+Bash
+
+curl --location --request PUT 'http://localhost:3000/api/usuario/usuario.novo@exemplo.com' \
+--header 'Authorization: Bearer <seu_token_jwt_aqui>' \
+--form 'nome="Nome Atualizado"' \
+--form 'fotoUsu=@"/caminho/para/nova/foto.jpg"'
+Deletar um usuário
+Endpoint: DELETE /api/usuario/:email
+Autenticação: Sim.
+Exemplo:
+Bash
+
+curl --location --request DELETE 'http://localhost:3000/api/usuario/usuario.novo@exemplo.com' \
+--header 'Authorization: Bearer <seu_token_jwt_aqui>'
+Dicas (Gerenciamento e Filtros)
+Atualizar uma dica
+Endpoint: PUT /api/dicas/:id
+Autenticação: Sim.
+Exemplo:
+Bash
+
+curl --location --request PUT 'http://localhost:3000/api/dicas/<uuid_da_dica_aqui>' \
+--header 'Authorization: Bearer <seu_token_jwt_aqui>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "titulo": "Título da Dica Atualizado",
+    "conteudo": "Conteúdo atualizado da dica...",
+    "tema": "Consumo",
+    "subtemas": ["Plástico", "Reciclagem"]
+}'
+Deletar uma dica
+Endpoint: DELETE /api/dicas/:id
+Autenticação: Sim.
+Exemplo:
+Bash
+
+curl --location --request DELETE 'http://localhost:3000/api/dicas/<uuid_da_dica_aqui>' \
+--header 'Authorization: Bearer <seu_token_jwt_aqui>'
+Listar dicas por tema (Geral)
+Endpoint: GET /api/:tema/dicas
+Autenticação: Não.
+Exemplo:
+Bash
+
+curl --location --request GET 'http://localhost:3000/api/Energia/dicas'
+Listar dicas verificadas por tema
+Endpoint: GET /api/:tema/dicas/verificadas
+Autenticação: Não.
+Exemplo:
+Bash
+
+curl --location --request GET 'http://localhost:3000/api/Gastro/dicas/verificadas'
+Receitas (Gerenciamento e Filtros)
+Atualizar uma receita
+Endpoint: PUT /api/receitas/:id
+Autenticação: Não.
+Exemplo:
+Bash
+
+curl --location --request PUT 'http://localhost:3000/api/receitas/<uuid_da_receita_aqui>' \
+--form 'titulo="Título Atualizado da Receita"'
+Deletar uma receita
+Endpoint: DELETE /api/receitas/:id
+Autenticação: Não.
+Exemplo:
+Bash
+
+curl --location --request DELETE 'http://localhost:3000/api/receitas/<uuid_da_receita_aqui>'
+Listar receitas por tema
+Endpoint: GET /api/:tema/receitas
+Autenticação: Não.
+Exemplo:
+Bash
+
+curl --location --request GET 'http://localhost:3000/api/Gastro/receitas'
+Ingredientes (Gerenciamento)
+Atualizar um ingrediente
+Endpoint: PUT /api/ingredientes/:ingredienteId
+Autenticação: Não.
+Exemplo:
+Bash
+
+curl --location --request PUT 'http://localhost:3000/api/ingredientes/<id_do_ingrediente_aqui>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "nomeIngrediente": "Casca de Banana Verde",
+    "quantidade": 3,
+    "medida": "unidades"
+}'
+Deletar um ingrediente
+Endpoint: DELETE /api/ingredientes/:ingredienteId
+Autenticação: Não.
+Exemplo:
+Bash
+
+curl --location --request DELETE 'http://localhost:3000/api/ingredientes/<id_do_ingrediente_aqui>'
+Temas (Gerenciamento)
+Deletar um tema
+Endpoint: DELETE /api/tema/:id
+Autenticação: Sim.
+Exemplo:
+Bash
+
+curl --location --request DELETE 'http://localhost:3000/api/tema/<id_do_tema_aqui>' \
+--header 'Authorization: Bearer <seu_token_jwt_aqui>'
