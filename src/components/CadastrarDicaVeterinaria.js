@@ -35,8 +35,6 @@ const CadastrarDicaVeterinaria = () => {
                     />
                 </div>
                 <div className="button-container">
-                    <button type="button" onClick={() => navigate('/inserir-especificacoes-veterinaria')}>Inserir Especificações</button>
-                    <button type="button" onClick={() => navigate('/inserir-midia')}>Inserir Mídia</button>
                     <button type="submit">Cadastrar</button>
                 </div>
             </form>
