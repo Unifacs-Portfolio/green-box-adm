@@ -1,21 +1,72 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Home.css';
+import { useAuth } from '../context/AuthContext'; // Importa o hook de autenticação
+import './Home.css'; // Reutilizando o estilo dos formulários
 
+// O nome do componente agora é CadastrarDicaCosmeticos
 const CadastrarDicaCosmeticos = () => {
+    // Estados do formulário
     const [nome, setNome] = useState('');
     const [descricao, setDescricao] = useState('');
-    const navigate = useNavigate();
+    const [subtemas, setSubtemas] = useState('');
 
-    const handleSubmit = (e) => {
+    // Estados de controle para feedback do usuário
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const navigate = useNavigate();
+    const { token, user } = useAuth(); // Pega token e usuário logado do contexto
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Dica:', { nome, descricao });
-        // Enviar os dados para uma API ou manipular de outra forma
+        setLoading(true);
+        setError(null);
+
+        if (!token || !user) {
+            setError("Você precisa estar logado para cadastrar uma dica.");
+            setLoading(false);
+            return;
+        }
+        
+        // Preparar o objeto de dados para enviar à API
+        const dadosParaApi = {
+            titulo: nome,
+            conteudo: descricao,
+            email: user.email,
+            tema: 'Cosméticos', 
+            subtemas: subtemas.split(',').map(s => s.trim()).filter(Boolean),
+        };
+
+        try {
+            // Chamada para o mesmo endpoint de criação de dicas
+            const response = await fetch('http://localhost:3000/api/dicas', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`  // Envia o token para autenticação
+                },
+                body: JSON.stringify(dadosParaApi)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Falha ao cadastrar a dica.');
+            }
+
+            alert('Dica de cosméticos cadastrada com sucesso!');
+            navigate('/cosmeticos'); // Redireciona para a página principal de cosméticos
+
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
         <div className="form-container">
-            <h2>Cadastrar Dica de Cosmético</h2>
+            {/* Título da página atualizado */}
+            <h2>Cadastrar Dica de Cosméticos</h2>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>Título da Dica:</label>
@@ -27,6 +78,7 @@ const CadastrarDicaCosmeticos = () => {
                     />
                 </div>
                 <div>
+                    {/* Label atualizada */}
                     <label>Descrição da Dica de Cosméticos:</label>
                     <textarea 
                         value={descricao} 
@@ -34,10 +86,24 @@ const CadastrarDicaCosmeticos = () => {
                         required 
                     />
                 </div>
+                <div>
+                    <label>Subtemas (separados por vírgula):</label>
+                    <input 
+                        type="text" 
+                        value={subtemas} 
+                        onChange={(e) => setSubtemas(e.target.value)} 
+
+                        placeholder="Ex: Maquiagem, Skincare, Cabelo"
+                        required 
+                    />
+                </div>
+
+                {error && <p style={{ color: 'red' }}>{error}</p>}
+
                 <div className="button-container">
-                    <button type="button" onClick={() => navigate('/inserir-especificacoes-cosmeticos')}>Inserir Especificações</button>
-                    <button type="button" onClick={() => navigate('/inserir-midia')}>Inserir Mídia</button>
-                    <button type="submit">Cadastrar</button>
+                    <button type="submit" disabled={loading}>
+                        {loading ? 'Cadastrando...' : 'Cadastrar'}
+                    </button>
                 </div>
             </form>
         </div>

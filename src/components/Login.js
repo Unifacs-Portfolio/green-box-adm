@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Importa nosso hook de autenticação
-import './Login.css'; // Vamos criar este arquivo para o estilo
+import { useAuth } from '../context/AuthContext'; 
+import './Login.css'; 
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    const { login } = useAuth(); // Pega a função de login do nosso contexto
+    const { login } = useAuth(); 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(''); // Limpa erros anteriores
+        setError(''); 
         try {
             await login(email, senha);
-            navigate('/'); // Se o login for bem-sucedido, navega para a Home
+            navigate('/'); 
         } catch (err) {
             setError(err.message || 'Erro desconhecido. Tente novamente.');
         }

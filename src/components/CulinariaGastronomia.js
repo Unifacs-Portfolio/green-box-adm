@@ -15,7 +15,7 @@ const CulinariaGastronomia = () => {
             <div className="button-container">
                 <button onClick={() => navigateTo('/cadastrar-receita')}>Cadastrar Receita</button>
                 <button onClick={() => navigateTo('/cadastrar-dica-culinaria')}>Cadastrar Dica</button>
-                <button onClick={() => navigateTo('/editar-dica-ou-receita-culinaria')}>Editar Receita/Dica</button>
+                <button onClick={() => navigateTo('/culinaria/editar')}>Editar Receita/Dica</button>
             </div>
         </div>
     );

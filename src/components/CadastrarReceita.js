@@ -1,46 +1,99 @@
-import React, { useState } from 'react'; // Importa o React e o hook useState para gerenciar o estado.
-// useState é um hook usado para gerenciar o estado local do componente, aqui ele vai ser usado para armazenar o nome e a descrição da receita.
-
-import { useNavigate } from 'react-router-dom'; // Importar useNavigate de react-router-dom
+import React, { useState, useEffect } from 'react';
+// Adicione useLocation para receber dados de volta
+import { useNavigate, useLocation } from 'react-router-dom'; 
+import { useAuth } from '../context/AuthContext';
 import './Home.css';
 
 const CadastrarReceita = () => {
-    const [nome, setNome] = useState(''); // Estado para armazenar o nome da receita. Inicialmente uma string vazia. setNome é a função associada ao estado nome, que permite atualizar o valor do nome.
-    const [descricao, setDescricao] = useState(''); // Estado para armazenar a descrição Inicialmente uma string vazia.
     const navigate = useNavigate();
+    const location = useLocation(); 
+    const { token, user } = useAuth();
 
-    const handleSubmit = (e) => {
-        e.preventDefault(); // Evita o comportamento padrão do formulário de recarregar a página ao submeter o formulário.
-        console.log('Receita:', { nome, descricao }); // Exibe no console os valores de nome e descricao da receita. Essa função é útil no futuro para enviar esses dados a uma API para armazenamento em um servidor.
-        // Aqui podemos enviar os dados para uma API futuramente
+    // Estados do formulário
+    const [titulo, setTitulo] = useState('');
+    const [conteudo, setConteudo] = useState('');
+    const [subtemas, setSubtemas] = useState('');
+    const [fotos, setFotos] = useState(null);
+    
+    const [ingredientes, setIngredientes] = useState([]); 
+
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        if (location.state?.updatedData) {
+            const { updatedData } = location.state;
+            setTitulo(updatedData.titulo || '');
+            setConteudo(updatedData.conteudo || '');
+            setSubtemas(updatedData.subtemas || '');
+            setFotos(updatedData.fotos || null);
+            setIngredientes(updatedData.ingredientes || []);
+        }
+    }, [location.state]);
+
+
+    const handleNavigateToIngredients = () => {
+        const currentData = { titulo, conteudo, subtemas, fotos, ingredientes };
+        navigate('/inserir-ingrediente', { state: { currentData } });
+    };
+
+    const handleFileChange = (e) => {
+        setFotos(e.target.files);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        // A lógica de submit aqui permanece a mesma, mas agora ela também
+        // precisaria ser adaptada para enviar os ingredientes junto.
+        // Por enquanto, vamos focar na navegação.
+        alert('Lógica de submit final a ser implementada!');
+        console.log({ titulo, conteudo, subtemas, fotos, ingredientes });
     };
 
     return (
-        // <form onSubmit={handleSubmit}> Inicia o formulário com o event onSubmite, vinculado à função handleSubmit, que será disparada quando o formulário for enviado.
         <div className="form-container">
-            <h2>Cadastrar Receita</h2>
+            <h2>Cadastrar Nova Receita</h2>
             <form onSubmit={handleSubmit}>
+
                 <div>
-                    <label>Nome da Receita:</label>
-                    <input 
-                        type="text" // Define o tipo de entrada como texto
-                        value={nome}  // O valor do campo entrada está vincalo ao estado nome, ou seja, o que o usuário digitar será refletido no estado.
-                        onChange={(e) => setNome(e.target.value)} // A cada modificação no campo de texto, a função setNome atualiza o estado nome com o valor atual do campo.
-                        required // Torna o campo obrigatório.
-                    />
+                    <label>Título da Receita:</label>
+                    <input type="text" value={titulo} onChange={(e) => setTitulo(e.target.value)} required />
                 </div>
                 <div>
-                    <label>Descrição da Receita:</label>
-                    <textarea 
-                        value={descricao} 
-                        onChange={(e) => setDescricao(e.target.value)} 
-                        required 
-                    />
+                    <label>Modo de Preparo / Conteúdo:</label>
+                    <textarea value={conteudo} onChange={(e) => setConteudo(e.target.value)} required />
                 </div>
+                <div>
+                    <label>Subtemas (separados por vírgula):</label>
+                    <input type="text" value={subtemas} onChange={(e) => setSubtemas(e.target.value)} placeholder="Ex: Vegano, Aproveitamento Integral" required />
+                </div>
+                <div>
+                    <label>Fotos da Receita:</label>
+                    <input type="file" multiple accept="image/*" onChange={handleFileChange} />
+                </div>
+
+                <div className="ingredient-list-preview">
+                    <h4>Ingredientes Adicionados:</h4>
+                    {ingredientes.length > 0 ? (
+                        <ul>
+                            {ingredientes.map((ing, index) => (
+                                <li key={index}>{`${ing.quantidade} ${ing.medida} de ${ing.nome}`}</li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>Nenhum ingrediente adicionado.</p>
+                    )}
+                </div>
+
+                {error && <p style={{ color: 'red' }}>{error}</p>}
+
                 <div className="button-container">
-                    <button type="button" onClick={() => navigate('/inserir-ingrediente')}>Inserir Ingrediente</button>
-                    <button type="button" onClick={() => navigate('/inserir-midia')}>Inserir Mídia</button>
-                    <button type="submit">Cadastrar</button>
+                    <button type="button" onClick={handleNavigateToIngredients} disabled={loading}>
+                        Adicionar/Editar Ingredientes
+                    </button>
+                    <button type="submit" disabled={loading}>
+                        {loading ? 'Cadastrando...' : 'Cadastrar Receita'}
+                    </button>
                 </div>
             </form>
         </div>

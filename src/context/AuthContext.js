@@ -1,30 +1,30 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
-// Cria o Contexto
 const AuthContext = createContext(null);
 
-// Cria o Provedor do Contexto
 export const AuthProvider = ({ children }) => {
-    // Tenta pegar o token do localStorage ao iniciar
-    const [token, setToken] = useState(localStorage.getItem('token'));
 
-    // Efeito para atualizar o localStorage sempre que o token mudar
+    const [token, setToken] = useState(localStorage.getItem('token'));
+    const [user, setUser] = useState(() => {
+        const storedUser = localStorage.getItem('user');
+        return storedUser ? JSON.parse(storedUser) : null;
+    });
+
     useEffect(() => {
-        if (token) {
+        if (token && user) {
             localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(user));
         } else {
             localStorage.removeItem('token');
+            localStorage.removeItem('user');
         }
-    }, [token]);
+    }, [token, user]);
 
-    // Função para fazer o login
     const login = async (email, senha) => {
         try {
-            const response = await fetch('http://localhost:3000/api/usuario/login', { // Altere para a URL de produção se necessário
+            const response = await fetch('http://localhost:3000/api/usuario/login', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, senha }),
             });
 
@@ -33,27 +33,27 @@ export const AuthProvider = ({ children }) => {
             }
 
             const data = await response.json();
-            setToken(data.token); // Salva o token no estado
-            return true; // Sucesso
+            setToken(data.token);
+            setUser(data.user); // <-- DADOS DO USUÁRIO SÃO SALVOS AQUI
+            return true;
         } catch (error) {
             console.error("Erro no login:", error);
-            setToken(null); // Garante que não há token em caso de erro
-            throw error; // Propaga o erro para o componente de Login tratar
+            setToken(null);
+            setUser(null);
+            throw error;
         }
     };
 
-    // Função para fazer logout
     const logout = () => {
         setToken(null);
+        setUser(null);
     };
-
-    // O valor que será compartilhado com os componentes filhos
-    const value = { token, login, logout };
+    // O valor do contexto inclui o token, o usuário e as funções de login e logout
+    const value = { token, user, login, logout };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// Hook customizado para facilitar o uso do contexto
 export const useAuth = () => {
     return useContext(AuthContext);
 };

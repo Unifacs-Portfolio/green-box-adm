@@ -1,16 +1,67 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext'; // 1. Importar o hook de autenticação
 import './Home.css';
 
 const CadastrarDicaModa = () => {
+    // Estados do formulário
     const [nome, setNome] = useState('');
     const [descricao, setDescricao] = useState('');
-    const navigate = useNavigate();
+    const [subtemas, setSubtemas] = useState(''); // 2. Novo estado para subtemas
 
-    const handleSubmit = (e) => {
+    // Estados de controle
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const navigate = useNavigate();
+    const { token, user } = useAuth(); // 3. Pegar token e dados do usuário do contexto
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Dica:', { nome, descricao });
-        // Enviar os dados para uma API ou manipular de outra forma
+        setLoading(true);
+        setError(null);
+
+        // Verifica se o usuário está logado
+        if (!token || !user) {
+            setError("Você precisa estar logado para cadastrar uma dica.");
+            setLoading(false);
+            return;
+        }
+        
+        // 4. Preparar os dados para a API
+        const dadosParaApi = {
+            titulo: nome,
+            conteudo: descricao,
+            email: user.email, // Usa o e-mail do usuário logado
+            tema: 'Moda',      // Tema fixo para esta página
+            subtemas: subtemas.split(',').map(s => s.trim()).filter(Boolean), // Converte a string "a, b, c" para o array ["a", "b", "c"]
+        };
+
+        try {
+            // 5. Fazer a chamada para a API
+            const response = await fetch('http://localhost:3000/api/dicas', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` // Envia o token de autenticação
+                },
+                body: JSON.stringify(dadosParaApi)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Falha ao cadastrar a dica.');
+            }
+
+            // Sucesso!
+            alert('Dica de moda cadastrada com sucesso!');
+            navigate('/moda'); // Navega para a página de moda após o sucesso
+
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -34,10 +85,25 @@ const CadastrarDicaModa = () => {
                         required 
                     />
                 </div>
+                {/* 6. Novo campo para subtemas no formulário */}
+                <div>
+                    <label>Subtemas (separados por vírgula):</label>
+                    <input 
+                        type="text" 
+                        value={subtemas} 
+                        onChange={(e) => setSubtemas(e.target.value)} 
+                        placeholder="Ex: Bazar, Roupas usadas, etc.."
+                        required 
+                    />
+                </div>
+
+                {/* Mostra mensagens de erro, se houver */}
+                {error && <p style={{ color: 'red' }}>{error}</p>}
+
                 <div className="button-container">
-                    <button type="button" onClick={() => navigate('/inserir-especificacoes-moda')}>Inserir Especificações</button>
-                    <button type="button" onClick={() => navigate('/inserir-midia')}>Inserir Mídia</button>
-                    <button type="submit">Cadastrar</button>
+                    <button type="submit" disabled={loading}>
+                        {loading ? 'Cadastrando...' : 'Cadastrar'}
+                    </button>
                 </div>
             </form>
         </div>

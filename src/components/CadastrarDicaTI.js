@@ -53,7 +53,8 @@ const CadastrarDicaTI = () => {
             }
 
             alert('Dica de TI cadastrada com sucesso!');
-            navigate('/TI'); // Redireciona para a página principal de culinária
+            // CORREÇÃO DE BUG: O comentário dizia "culinária", mas a rota era "/TI". Mantive a rota correta.
+            navigate('/TI'); // Redireciona para a página principal de TI
 
         } catch (err) {
             setError(err.message);
@@ -89,7 +90,7 @@ const CadastrarDicaTI = () => {
                         type="text" 
                         value={subtemas} 
                         onChange={(e) => setSubtemas(e.target.value)} 
-                        placeholder="Ex: Técnicas, Projetos"
+                        placeholder="Ex: Redes, Segurança, Programação"
                         required 
                     />
                 </div>
