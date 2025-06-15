@@ -43,11 +43,57 @@ const CadastrarReceita = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // A lógica de submit aqui permanece a mesma, mas agora ela também
-        // precisaria ser adaptada para enviar os ingredientes junto.
-        // Por enquanto, vamos focar na navegação.
-        alert('Lógica de submit final a ser implementada!');
-        console.log({ titulo, conteudo, subtemas, fotos, ingredientes });
+
+        if (ingredientes.length === 0) {
+            setError('Adicione pelo menos um ingrediente antes de cadastrar a receita.');
+            return;
+        }
+
+        setLoading(true);
+        setError(null);
+
+
+        const formData = new FormData();
+
+  
+        formData.append('titulo', titulo);
+        formData.append('conteudo', conteudo);
+        formData.append('subtemas', subtemas);
+        
+        formData.append('ingredientes', JSON.stringify(ingredientes));
+
+        if (fotos && fotos.length > 0) {
+            for (let i = 0; i < fotos.length; i++) {
+                formData.append('fotos', fotos[i]);
+            }
+        }
+        
+        try {
+            // 6. Envia a requisição para a tua API
+            const response = await fetch('http://localhost:5000/api/receitas', { 
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    // IMPORTANTE: NÃO defina 'Content-Type'. O navegador fará isso
+                    // automaticamente para FormData, incluindo o 'boundary' correto.
+                },
+                body: formData, 
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Falha ao cadastrar a receita.');
+            }
+
+            // 8. Se tudo correu bem
+            alert('Receita cadastrada com sucesso!');
+            navigate('/home'); 
+
+        } catch (err) {
+            setError(err.message);
+        } finally {   
+            setLoading(false);
+        }
     };
 
     return (

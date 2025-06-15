@@ -1,23 +1,21 @@
-import React, { useState, useEffect, useCallback } from 'react'; 
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import './ListaEditar.css'; 
+import './ListaEditar.css'; // Reutilizando o CSS
 
-const ListaEditarModa = () => {
+const ListaEditarVeterinaria = () => {
     const [dicas, setDicas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const fetchDicasModa = useCallback(async () => {
-        setLoading(true); 
-        setError(null);   
+    const fetchDicasVeterinaria = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        
+        const tema = 'Veterinaria'; // Tema para esta página
         try {
-            const response = await fetch('http://localhost:3000/api/Moda/dicas');
+            const response = await fetch(`http://localhost:3000/api/${tema}/dicas`);
             if (!response.ok) {
-    
-                if (response.status === 404) {
-                    throw new Error('Nenhuma dica encontrada para esta categoria.');
-                }
-                throw new Error('Falha na comunicação com o servidor. Verifique sua conexão.');
+                throw new Error('Não foi possível carregar as dicas de veterinária.');
             }
             const data = await response.json();
             setDicas(data.dicas);
@@ -26,17 +24,15 @@ const ListaEditarModa = () => {
         } finally {
             setLoading(false);
         }
-    }, []); 
-
+    }, []);
 
     useEffect(() => {
-        fetchDicasModa();
-    }, [fetchDicasModa]); 
+        fetchDicasVeterinaria();
+    }, [fetchDicasVeterinaria]); 
 
     if (loading) {
-        return <div className="list-container"><h2>Carregando dicas de moda...</h2></div>;
+        return <div className="list-container"><h2>Carregando dicas de veterinária...</h2></div>;
     }
-
 
     if (error) {
         return (
@@ -44,7 +40,7 @@ const ListaEditarModa = () => {
                 <div className="error-container">
                     <h3>Oops! Algo deu errado.</h3>
                     {/* <p>{error}</p> */}
-                    <button onClick={fetchDicasModa} className="retry-button">
+                    <button onClick={fetchDicasVeterinaria} className="retry-button">
                         Tentar Novamente
                     </button>
                 </div>
@@ -54,15 +50,15 @@ const ListaEditarModa = () => {
 
     return (
         <div className="list-container">
-            <h2>Editar Dicas de Moda</h2>
+            <h2>Editar Dicas de Veterinária</h2>
             {dicas.length === 0 ? (
-                <p>Nenhuma dica de moda foi cadastrada ainda.</p>
+                <p>Nenhuma dica de veterinária encontrada.</p>
             ) : (
                 <ul className="items-list">
                     {dicas.map(dica => (
                         <li key={dica.id} className="list-item">
                             <span>{dica.titulo}</span>
-                            <Link to={`/editar-dica-moda/${dica.id}`} className="edit-button">
+                            <Link to={`/editar-dica-veterinaria/${dica.id}`} className="edit-button">
                                 Editar
                             </Link>
                         </li>
@@ -73,4 +69,4 @@ const ListaEditarModa = () => {
     );
 };
 
-export default ListaEditarModa;
+export default ListaEditarVeterinaria;

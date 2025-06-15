@@ -14,7 +14,7 @@ const Veterinaria = () => {
             <h1 className="title">Veterinária</h1>
             <div className="button-container">
                 <button onClick={() => navigateTo('/cadastrar-dica-veterinaria')}>Cadastrar Dica de Veterinária</button>
-                <button onClick={() => navigateTo('/editar-dica-veterinaria')}>Editar Dica de Veterinária</button>
+                <button onClick={() => navigateTo('/veterinaria/editar')}>Editar Dica de Veterinária</button>
             </div>
         </div>
     );

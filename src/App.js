@@ -32,8 +32,11 @@ import ListaEditarCosmeticos from './components/ListaEditarCosmeticos';
 import EditarDicaCosmeticos from './components/EditarDicaCosmeticos';
 import ListaEditarCulinaria from './components/ListaEditarCulinaria'; 
 import EditarDicaOuReceitaCulinaria from './components/EditarDicaOuReceitaCulinaria';
+import ListaEditarEngenharia from './components/ListaEditarEngenharia';
 import EditarDicaEngenharia from './components/EditarDicaEngenharia';
+import ListaEditarTI from './components/ListaEditarTI';
 import EditarDicaTI from './components/EditarDicaTI';
+import ListaEditarVeterinaria from './components/ListaEditarVeterinaria';
 import EditarDicaVeterinaria from './components/EditarDicaVeterinaria';
 
 // --- Páginas da Comunidade por Tema ---
@@ -114,8 +117,15 @@ function App() {
               <Route path="/editar-dica-ou-receita-culinaria/:id" element={<EditarDicaOuReceitaCulinaria />} />
 
               {/* Rotas de edição atualizadas para aceitar ID */}
+              <Route path="/engenharia/editar" element={<ListaEditarEngenharia />} />
               <Route path="/editar-dica-engenharia/:dicaId" element={<EditarDicaEngenharia />} />
+
+              {/* Culinária */}
+              <Route path="/ti/editar" element={<ListaEditarTI />} />
               <Route path="/editar-dica-ti/:dicaId" element={<EditarDicaTI />} />
+
+              {/* Culinária */}
+              <Route path="/veterinaria/editar" element={<ListaEditarVeterinaria />} />
               <Route path="/editar-dica-veterinaria/:dicaId" element={<EditarDicaVeterinaria />} />
 
               {/* Páginas da Comunidade */}

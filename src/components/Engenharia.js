@@ -14,7 +14,7 @@ const Moda = () => {
             <h1 className="title">Engenharia</h1>
             <div className="button-container">
                 <button onClick={() => navigateTo('/cadastrar-dica-Engenharia')}>Cadastrar Dica de Engenharia</button>
-                <button onClick={() => navigateTo('/editar-dica-engenharia')}>Editar Dica de Engenharia</button>
+                <button onClick={() => navigateTo('/engenharia/editar')}>Editar Dica de Engenharia</button>
             </div>
         </div>
     );
