@@ -39,7 +39,7 @@ const ListaEditarCulinaria = () => {
             <div className="list-container">
                 <div className="error-container">
                     <h3>Oops! Algo deu errado.</h3>
-                    <p>{error}</p>
+                    {/* <p>{error}</p> */}
                     <button onClick={fetchDicasCulinaria} className="retry-button">
                         Tentar Novamente
                     </button>
