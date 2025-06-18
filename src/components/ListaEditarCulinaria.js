@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import './ListaEditar.css'; 
+import API_BASE_URL from '../apiConfig';
 
 const ListaEditarCulinaria = () => {
     const [dicas, setDicas] = useState([]);
@@ -13,7 +14,7 @@ const ListaEditarCulinaria = () => {
         
         const tema = encodeURIComponent('Culinária');
         try {
-            const response = await fetch(`http://localhost:3000/api/${tema}/dicas`);
+            const response = await fetch(`${API_BASE_URL}/api/${tema}/dicas`);
             if (!response.ok) {
                 throw new Error('Não foi possível carregar as dicas de culinária.');
             }

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; // Importa o hook de autenticação
 import './Home.css'; // Reutilizando o estilo dos formulários
+import API_BASE_URL from '../apiConfig';
 
 const CadastrarDicaCulinaria = () => {
     // Estados do formulário
@@ -38,7 +39,7 @@ const CadastrarDicaCulinaria = () => {
 
         try {
             // A chamada é para o mesmo endpoint de criação de dicas
-            const response = await fetch('http://localhost:3000/api/dicas', {
+            const response = await fetch(`${API_BASE_URL}/api/dicas`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'; 
 import { Link } from 'react-router-dom';
 import './ListaEditar.css'; 
+import API_BASE_URL from '../apiConfig';
 
 const ListaEditarModa = () => {
     const [dicas, setDicas] = useState([]);
@@ -11,7 +12,7 @@ const ListaEditarModa = () => {
         setLoading(true); 
         setError(null);   
         try {
-            const response = await fetch('http://localhost:3000/api/Moda/dicas');
+            const response = await fetch(`${API_BASE_URL}/api/Moda/dicas`);
             if (!response.ok) {
     
                 if (response.status === 404) {

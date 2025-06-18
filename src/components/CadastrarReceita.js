@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-// Adicione useLocation para receber dados de volta
 import { useNavigate, useLocation } from 'react-router-dom'; 
 import { useAuth } from '../context/AuthContext';
 import './Home.css';
+import API_BASE_URL from '../apiConfig';
 
 const CadastrarReceita = () => {
     const navigate = useNavigate();
@@ -14,7 +14,6 @@ const CadastrarReceita = () => {
     const [conteudo, setConteudo] = useState('');
     const [subtemas, setSubtemas] = useState('');
     const [fotos, setFotos] = useState(null);
-    
     const [ingredientes, setIngredientes] = useState([]); 
 
     const [loading, setLoading] = useState(false);
@@ -31,7 +30,6 @@ const CadastrarReceita = () => {
         }
     }, [location.state]);
 
-
     const handleNavigateToIngredients = () => {
         const currentData = { titulo, conteudo, subtemas, fotos, ingredientes };
         navigate('/inserir-ingrediente', { state: { currentData } });
@@ -41,6 +39,7 @@ const CadastrarReceita = () => {
         setFotos(e.target.files);
     };
 
+    // LÓGICA DE SUBMISSÃO COMPLETAMENTE REFEITA
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -49,49 +48,82 @@ const CadastrarReceita = () => {
             return;
         }
 
+        if (!user) {
+            setError('Usuário não autenticado. Faça login novamente.');
+            return;
+        }
+
         setLoading(true);
         setError(null);
-
-
-        const formData = new FormData();
-
-  
-        formData.append('titulo', titulo);
-        formData.append('conteudo', conteudo);
-        formData.append('subtemas', subtemas);
-        
-        formData.append('ingredientes', JSON.stringify(ingredientes));
-
-        if (fotos && fotos.length > 0) {
-            for (let i = 0; i < fotos.length; i++) {
-                formData.append('fotos', fotos[i]);
-            }
-        }
         
         try {
-            // 6. Envia a requisição para a tua API
-            const response = await fetch('http://localhost:5000/api/receitas', { 
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    // IMPORTANTE: NÃO defina 'Content-Type'. O navegador fará isso
-                    // automaticamente para FormData, incluindo o 'boundary' correto.
-                },
-                body: formData, 
+            // --- PASSO 1: Criar a Receita ---
+            const recipeFormData = new FormData();
+            recipeFormData.append('titulo', titulo);
+            recipeFormData.append('conteudo', conteudo);
+            recipeFormData.append('idUsuario', user.id); 
+            recipeFormData.append('tema', 'Gastro');    
+
+            const subtemasArray = subtemas.split(',').map(s => s.trim()).filter(Boolean);
+            subtemasArray.forEach(subtema => {
+                recipeFormData.append('subtemas', subtema);
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Falha ao cadastrar a receita.');
+            // CORRIGIDO: Adiciona fotos no campo 'files'
+            if (fotos && fotos.length > 0) {
+                for (let i = 0; i < fotos.length; i++) {
+                    recipeFormData.append('files', fotos[i]);
+                }
             }
 
-            // 8. Se tudo correu bem
-            alert('Receita cadastrada com sucesso!');
-            navigate('/home'); 
+            const recipeResponse = await fetch(`${API_BASE_URL}/api/receitas`, { 
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: recipeFormData, 
+            });
+
+            if (!recipeResponse.ok) {
+                throw new Error('Falha ao criar a receita principal.');
+            }
+
+            const newRecipeData = await recipeResponse.json();
+            const newRecipeId = newRecipeData.receita.id; // Pega o ID da receita recém-criada
+
+            // --- PASSO 2: Criar os Ingredientes ---
+            // Cria uma "promessa" para cada requisição de ingrediente
+            const ingredientPromises = ingredientes.map(ing => {
+                return fetch(`${API_BASE_URL}/api/ingredientes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        nomeIngrediente: ing.nome,
+                        quantidade: parseFloat(ing.quantidade), // Garante que é um número
+                        medida: ing.medida,
+                        receitaId: newRecipeId // Associa ao ID da receita criada
+                    })
+                });
+            });
+
+            // Executa todas as promessas em paralelo
+            const ingredientResponses = await Promise.all(ingredientPromises);
+
+            // Verifica se alguma das requisições de ingrediente falhou
+            const failedRequest = ingredientResponses.find(res => !res.ok);
+            if (failedRequest) {
+                throw new Error('Falha ao salvar um ou mais ingredientes.');
+            }
+
+            // Se tudo correu bem
+            alert('Receita e ingredientes cadastrados com sucesso!');
+            navigate('/culinaria-gastronomia'); 
 
         } catch (err) {
+            // Se qualquer passo falhar, mostra o erro
             setError(err.message);
-        } finally {   
+        } finally {   
             setLoading(false);
         }
     };
@@ -100,7 +132,7 @@ const CadastrarReceita = () => {
         <div className="form-container">
             <h2>Cadastrar Nova Receita</h2>
             <form onSubmit={handleSubmit}>
-
+                {/* ... O resto do seu formulário JSX permanece o mesmo ... */}
                 <div>
                     <label>Título da Receita:</label>
                     <input type="text" value={titulo} onChange={(e) => setTitulo(e.target.value)} required />

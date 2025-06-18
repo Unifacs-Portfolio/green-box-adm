@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import API_BASE_URL from '../apiConfig';
 
 const AuthContext = createContext(null);
 
@@ -22,7 +23,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, senha) => {
         try {
-            const response = await fetch('http://localhost:3000/api/usuario/login', {
+            const response = await fetch(`${API_BASE_URL}/api/usuario/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, senha }),
@@ -33,6 +34,7 @@ export const AuthProvider = ({ children }) => {
             }
 
             const data = await response.json();
+             console.log('Dados recebidos da API após login:', data); 
             setToken(data.token);
             setUser(data.user); // <-- DADOS DO USUÁRIO SÃO SALVOS AQUI
             return true;

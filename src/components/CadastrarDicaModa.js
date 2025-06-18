@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; // 1. Importar o hook de autenticação
 import './Home.css';
+import API_BASE_URL from '../apiConfig';
 
 const CadastrarDicaModa = () => {
     // Estados do formulário
@@ -39,7 +40,7 @@ const CadastrarDicaModa = () => {
 
         try {
             // 5. Fazer a chamada para a API
-            const response = await fetch('http://localhost:3000/api/dicas', {
+            const response = await fetch(`${API_BASE_URL}/api/dicas`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
