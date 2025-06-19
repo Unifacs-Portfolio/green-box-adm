@@ -20,7 +20,8 @@ const EditarDicaCosmeticos = () => {
     useEffect(() => {
         const fetchDica = async () => {
             try {
-                const response = await fetch(`http://localhost:3000/api/dicas/${dicaId}`);
+                // Usando a variável de ambiente para a URL base
+                const response = await fetch(`${API_BASE_URL}/api/dicas/${dicaId}`);
                 if (!response.ok) throw new Error('Dica não encontrada.');
                 
                 const data = await response.json();
@@ -37,32 +38,43 @@ const EditarDicaCosmeticos = () => {
         fetchDica();
     }, [dicaId]);
 
+    // LÓGICA DE SUBMISSÃO CORRIGIDA
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
 
-        const dadosAtualizados = {
-            titulo,
-            conteudo,
-            tema: 'Cosméticos', // <-- Tema fixo para esta página
-            subtemas: subtemas.split(',').map(s => s.trim()).filter(Boolean),
-        };
+        // 1. Criamos um objeto FormData, que é o formato que o backend espera.
+        const formData = new FormData();
+
+        // 2. Adicionamos cada campo de texto ao FormData.
+        formData.append('titulo', titulo);
+        formData.append('conteudo', conteudo);
+        formData.append('tema', 'Cosmeticos'); // Tema corrigido para o esperado pela API
+
+        // O backend espera um array, então adicionamos cada subtema individualmente.
+        const subtemasArray = subtemas.split(',').map(s => s.trim()).filter(Boolean);
+        subtemasArray.forEach(subtema => {
+            formData.append('subtemas', subtema);
+        });
 
         try {
+            // 3. Enviamos a requisição com o FormData como corpo.
             const response = await fetch(`${API_BASE_URL}/api/dicas/${dicaId}`, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(dadosAtualizados)
+                body: formData // Enviamos o objeto FormData
             });
 
-            if (!response.ok) throw new Error('Falha ao atualizar a dica.');
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: 'Falha ao atualizar a dica.' }));
+                throw new Error(errorData.message || 'Falha ao atualizar a dica.');
+            }
 
-            alert('Dica atualizada com sucesso!');
-            navigate('/cosmeticos/editar'); // <-- Volta para a nova lista de edição
+            alert('Dica de cosméticos atualizada com sucesso!');
+            navigate('/cosmeticos/editar'); // Volta para a nova lista de edição
 
         } catch (err) {
             setError(err.message);

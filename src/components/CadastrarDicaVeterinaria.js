@@ -33,7 +33,7 @@ const CadastrarDicaVeterinaria = () => {
             titulo: nome,
             conteudo: descricao,
             email: user.email,
-            tema: 'Veterinária', // Tema fixo para esta página
+            tema: 'Veterinaria', // Tema fixo para esta página
             subtemas: subtemas.split(',').map(s => s.trim()).filter(Boolean),
         };
 

@@ -33,7 +33,7 @@ const CadastrarDicaCulinaria = () => {
             titulo: nome,
             conteudo: descricao,
             email: user.email,
-            tema: 'Culinária', // Tema fixo para esta página
+            tema: 'Culinaria', // Tema fixo para esta página
             subtemas: subtemas.split(',').map(s => s.trim()).filter(Boolean),
         };
 

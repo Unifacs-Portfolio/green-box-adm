@@ -34,7 +34,7 @@ const CadastrarDicaCosmeticos = () => {
             titulo: nome,
             conteudo: descricao,
             email: user.email,
-            tema: 'Cosméticos', 
+            tema: 'Cosmeticos', 
             subtemas: subtemas.split(',').map(s => s.trim()).filter(Boolean),
         };
 

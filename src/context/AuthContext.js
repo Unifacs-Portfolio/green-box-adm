@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
         }
     }, [token, user]);
 
-    const login = async (email, senha) => {
+   const login = async (email, senha) => {
         try {
             const response = await fetch(`${API_BASE_URL}/api/usuario/login`, {
                 method: 'POST',
@@ -34,9 +34,13 @@ export const AuthProvider = ({ children }) => {
             }
 
             const data = await response.json();
-             console.log('Dados recebidos da API após login:', data); 
+            console.log('Dados recebidos da API após login:', data); 
             setToken(data.token);
-            setUser(data.user); // <-- DADOS DO USUÁRIO SÃO SALVOS AQUI
+            
+            // ALTERAÇÃO PRINCIPAL AQUI:
+            // Em vez de data.user, criamos um objeto com o email da função.
+            setUser({ email: email }); 
+            
             return true;
         } catch (error) {
             console.error("Erro no login:", error);

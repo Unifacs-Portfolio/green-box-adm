@@ -19,6 +19,7 @@ const ListaEditarEngenharia = () => {
                 throw new Error('Não foi possível carregar as dicas de engenharia.');
             }
             const data = await response.json();
+            console.log('Dicas de engenharia recebidas:', data);
             setDicas(data.dicas);
         } catch (err) {
             setError(err.message);
