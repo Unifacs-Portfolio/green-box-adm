@@ -6,7 +6,7 @@ import API_BASE_URL from '../apiConfig';
 
 const EditarDicaModa = () => {
     // Hooks para pegar parâmetros da URL, navegar e usar autenticação
-    const { dicaId } = useParams(); // Pega o ":dicaId" da URL
+    const { dicaId } = useParams();
     const navigate = useNavigate();
     const { token } = useAuth();
 
@@ -23,15 +23,15 @@ const EditarDicaModa = () => {
     useEffect(() => {
         const fetchDica = async () => {
             try {
+                // Usando a URL de produção diretamente, conforme seu código
                 const response = await fetch(`${API_BASE_URL}/api/dicas/${dicaId}`);
                 if (!response.ok) {
                     throw new Error('Dica não encontrada.');
                 }
                 const data = await response.json();
-                // Preenche o formulário com os dados da API
                 setTitulo(data.titulo);
                 setConteudo(data.conteudo);
-                setSubtemas(data.subtemas.join(', ')); // Converte o array de subtemas em texto
+                setSubtemas(data.subtemas.join(', '));
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -40,36 +40,46 @@ const EditarDicaModa = () => {
         };
 
         fetchDica();
-    }, [dicaId]); // Roda sempre que o dicaId mudar
+    }, [dicaId]);
 
+    // LÓGICA DE SUBMISSÃO CORRIGIDA
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
 
-        const dadosAtualizados = {
-            titulo,
-            conteudo,
-            tema: 'Moda', // O tema não muda
-            subtemas: subtemas.split(',').map(s => s.trim()).filter(Boolean),
-        };
+        // 1. Criamos um objeto FormData, que é o formato que o backend espera.
+        const formData = new FormData();
+
+        // 2. Adicionamos cada campo de texto ao FormData.
+        formData.append('titulo', titulo);
+        formData.append('conteudo', conteudo);
+        formData.append('tema', 'Moda');
+
+        // O backend espera um array, então adicionamos cada subtema individualmente.
+        const subtemasArray = subtemas.split(',').map(s => s.trim()).filter(Boolean);
+        subtemasArray.forEach(subtema => {
+            formData.append('subtemas', subtema);
+        });
 
         try {
-            const response = await fetch(`http://localhost:3000/api/dicas/${dicaId}`, {
-                method: 'PUT', // Uso PUT para atualizar
+            // 3. Enviamos a requisição com o FormData como corpo.
+            const response = await fetch(`${API_BASE_URL}/api/dicas/${dicaId}`, {
+                method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` // Autenticação é necessária para editar
+                    'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(dadosAtualizados)
+                body: formData // Enviamos o objeto FormData
             });
 
             if (!response.ok) {
-                throw new Error('Falha ao atualizar a dica.');
+                // A resposta de erro do backend ainda pode ser JSON
+                const errorData = await response.json().catch(() => ({ message: 'Falha ao atualizar a dica.' }));
+                throw new Error(errorData.message || 'Falha ao atualizar a dica.');
             }
 
             alert('Dica atualizada com sucesso!');
-            navigate('/moda/editar'); // Volta para a lista de edição
+            navigate('/moda/editar');
 
         } catch (err) {
             setError(err.message);
@@ -85,6 +95,7 @@ const EditarDicaModa = () => {
         <div className="form-container">
             <h2>Editar Dica de Moda</h2>
             <form onSubmit={handleSubmit}>
+                {/* O seu formulário JSX continua exatamente o mesmo */}
                 <div>
                     <label>Título da Dica:</label>
                     <input 

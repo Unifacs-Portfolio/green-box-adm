@@ -17,6 +17,8 @@ const CadastrarDicaModa = () => {
     const navigate = useNavigate();
     const { token, user } = useAuth(); // 3. Pegar token e dados do usuário do contexto
 
+    console.log(token); // Log para depuração
+console.log(user); // Log para depuração
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);

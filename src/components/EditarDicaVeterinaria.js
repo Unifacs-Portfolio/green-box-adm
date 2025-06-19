@@ -19,7 +19,7 @@ const EditarDicaVeterinaria = () => {
     useEffect(() => {
         const fetchDica = async () => {
             try {
-                const response = await fetch(`http://localhost:3000/api/dicas/${dicaId}`);
+                const response = await fetch(`${API_BASE_URL}/api/dicas/${dicaId}`);
                 if (!response.ok) throw new Error('Dica não encontrada.');
                 
                 const data = await response.json();
@@ -41,27 +41,37 @@ const EditarDicaVeterinaria = () => {
         setLoading(true);
         setError(null);
 
-        const dadosAtualizados = {
-            titulo,
-            conteudo,
-            tema: 'Veterinaria', // <-- Tema fixo para esta página
-            subtemas: subtemas.split(',').map(s => s.trim()).filter(Boolean),
-        };
+        // 1. Criamos um objeto FormData para alinhar com o backend.
+        const formData = new FormData();
+
+        // 2. Adicionamos cada campo de texto ao FormData.
+        formData.append('titulo', titulo);
+        formData.append('conteudo', conteudo);
+        formData.append('tema', 'Veterinaria');
+
+        // Adicionamos cada subtema individualmente.
+        const subtemasArray = subtemas.split(',').map(s => s.trim()).filter(Boolean);
+        subtemasArray.forEach(subtema => {
+            formData.append('subtemas', subtema);
+        });
 
         try {
+            // 3. Enviamos a requisição com o FormData como corpo.
             const response = await fetch(`${API_BASE_URL}/api/dicas/${dicaId}`, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(dadosAtualizados)
+                body: formData
             });
 
-            if (!response.ok) throw new Error('Falha ao atualizar a dica.');
+            if (!response.ok) {
+                 const errorData = await response.json().catch(() => ({ message: 'Falha ao atualizar a dica.' }));
+                throw new Error(errorData.message || 'Falha ao atualizar a dica.');
+            }
 
             alert('Dica de veterinária atualizada com sucesso!');
-            navigate('/veterinaria/editar'); // <-- Volta para a nova lista de edição
+            navigate('/veterinaria/editar');
 
         } catch (err) {
             setError(err.message);

@@ -12,7 +12,7 @@ const ListaEditarCulinaria = () => {
         setLoading(true);
         setError(null);
         
-        const tema = encodeURIComponent('Culinária');
+        const tema = encodeURIComponent('Culinaria');
         try {
             const response = await fetch(`${API_BASE_URL}/api/${tema}/dicas`);
             if (!response.ok) {

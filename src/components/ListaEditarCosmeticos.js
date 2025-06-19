@@ -13,7 +13,7 @@ const ListaEditarCosmeticos = () => {
         setLoading(true);
         setError(null);
         
-        const tema = encodeURIComponent('Cosméticos');
+        const tema = encodeURIComponent('Cosmeticos');
         try {
             const response = await fetch(`${API_BASE_URL}/api/${tema}/dicas`);
             if (!response.ok) {
@@ -23,6 +23,7 @@ const ListaEditarCosmeticos = () => {
                 throw new Error('Falha na comunicação com o servidor. Verifique sua conexão.');
             }
             const data = await response.json();
+            console.log('Dicas de cosméticos recebidas:', data);
             setDicas(data.dicas);
         } catch (err) {
             setError(err.message);
